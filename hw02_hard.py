@@ -6,6 +6,17 @@ x = 2.5
 # вычислите и выведите y
 
 
+k_ind = equation.find("=", 0) + 2
+x_ind = equation.find("x", 0)
+b_ind = equation.rfind("+", 0) + 2
+print(k_ind, x_ind, b_ind)
+
+k = float(equation[k_ind:x_ind])
+b = float(equation[b_ind:])
+y = k * x + b
+print(y)
+
+
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
 # Проверить, корректно ли введена дата.
 # Условия корректности:
