@@ -13,6 +13,21 @@
 
 # Подсказка: воспользоваться методом .format()
 
+fruits = ["яблоко", "банан", "киви", "арбуз"]
+
+max_size = 0
+for f in fruits:
+    if len(f) >  max_size:
+        max_size = len(f)
+
+i = 1
+space = " "
+for f in fruits:
+    if len(f) < max_size:
+        space = space * ((max_size - len(f)) + 1)
+    print('{}.{}{}'.format(i, space, f))
+    i += 1
+    space = " "
 
 # Задача-2:
 # Даны два произвольные списка.
