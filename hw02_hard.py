@@ -5,7 +5,6 @@ equation = 'y = -12x + 11111140.2121'
 x = 2.5
 # вычислите и выведите y
 
-
 k_ind = equation.find("=", 0) + 2
 x_ind = equation.find("x", 0)
 b_ind = equation.rfind("+", 0) + 2
@@ -15,7 +14,6 @@ k = float(equation[k_ind:x_ind])
 b = float(equation[b_ind:])
 y = k * x + b
 print(y)
-
 
 # Задание-2: Дата задана в виде строки формата 'dd.mm.yyyy'.
 # Проверить, корректно ли введена дата.
@@ -31,10 +29,48 @@ print(y)
 date = '01.11.1985'
 
 # Примеры некорректных дат
-date = '01.22.1001'
-date = '1.12.1001'
-date = '-2.10.3001'
+# date = '01.22.1001'
+# date = '1.12.1001'
+# date = '-2.10.3001'
 
+date_true = "Дата верна"
+date_false = "Некорректная дата"
+
+if date[2] == "." and date[5] == ".":
+    day = int(date[0:2])
+    month = int(date[3:5])
+    year = int(date[6:])
+
+    if year >= 1 and year <= 9999:
+        if month  >= 1 and month <= 12:
+            if month <= 7:
+                if month % 2 != 0:
+                    if day >= 1 and day <= 31:
+                        print(date_true)
+                    else:
+                        print(date_false)
+                else:
+                    if day >= 1 and day <= 30:
+                        print(date_true)
+                    else:
+                        print(date_false)
+            else:
+                if month % 2 == 0:
+                    if day >= 1 and day <= 31:
+                        print(date_true)
+                    else:
+                        print(date_false)
+                else:
+                    if day >= 1 and day <= 30:
+                        print(date_true)
+                    else:
+                        print(date_false)
+        else:
+            print(date_false)
+    else:
+        print(date_false)
+else:
+    print(date_false)
 
 # Задание-3: "Перевёрнутая башня" (Задача олимпиадного уровня)
 #
