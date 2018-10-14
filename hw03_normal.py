@@ -40,6 +40,33 @@ print(sort_to_max([2, 10, -12, 2.5, 20, -11, 4, 4, 0]))
 # Напишите собственную реализацию стандартной функции filter.
 # Разумеется, внутри нельзя использовать саму функцию filter.
 
+ages = [5, 18, 17, 19, 14, 32]
+
+
+# функция ключ для фильтрации
+def my_func(x):
+    if x < 18:
+        return False
+    else:
+        return True
+
+
+# фильтрация
+def my_filter(func, lst):
+    i = 0
+    while i < len(lst):
+        if func(lst[i]):
+            pass
+            print("F true")
+        else:
+            lst.pop(i)
+            i -= 1
+            print("F false")
+        i += 1
+    return lst
+
+
+print(my_filter(my_func, ages))
 
 # Задача-4:
 # Даны четыре точки А1(х1, у1), А2(x2 ,у2), А3(x3 , у3), А4(х4, у4).
