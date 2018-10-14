@@ -22,9 +22,19 @@ print(fibonacci(6, 11))
 
 
 def sort_to_max(origin_list):
-    pass
+    j = 0
+    while j < len(origin_list) - 1:
+        i = 0
+        while i + j < len(origin_list) - 1:
+            if origin_list[i] > origin_list[i + 1]:
+                # swap
+                origin_list[i], origin_list[i + 1] = origin_list[i + 1], origin_list[i]
+            i += 1
+        j += 1
+    return origin_list
 
-sort_to_max([2, 10, -12, 2.5, 20, -11, 4, 4, 0])
+
+print(sort_to_max([2, 10, -12, 2.5, 20, -11, 4, 4, 0]))
 
 # Задача-3:
 # Напишите собственную реализацию стандартной функции filter.
