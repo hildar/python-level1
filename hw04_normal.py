@@ -23,7 +23,7 @@ line = 'mtMmEZUOmcqWiryMQhhTxqKdSTKCYEJlEZCsGAMkgAYEOmHBSQsSUHKvSfbmxULaysmNO'\
        'zTYwZAiRwycdlHfyHNGmkNqSwXUrxGc'
 
 pattern = '([a-z]+)'
-print(re.findall(pattern, line))
+print('List1 =', re.findall(pattern, line))
 
 # Задание-2:
 # Вывести символы в верхнем регистре, слева от которых находятся
@@ -48,6 +48,16 @@ line_2 = 'mtMmEZUOmcqWiryMQhhTxqKdSTKCYEJlEZCsGAMkgAYEOmHBSQsSUHKvSfbmxULaysm'\
        'uXBqHFjvihuNGEEFsfnMXTfptvIOlhKhyYwxLnqOsBdGvnuyEZIheApQGOXWeXoLWiDQN'\
        'JFaXiUWgsKQrDOeZoNlZNRvHnLgCmysUeKnVJXPFIzvdDyleXylnKBfLCjLHntltignbQ'\
        'oiQzTYwZAiRwycdlHfyHNGmkNqSwXUrxGC'
+
+pattern2 = '([a-z]{2})([A-Z]+)([A-Z]{2})'
+
+lst1 = [el for el in re.findall(pattern2, line_2)]
+lst2 = []
+
+for el in lst1:
+    lst2.append(el[1])
+
+print('List2 =', lst2)
 
 # Задание-3:
 # Напишите скрипт, заполняющий указанный файл (самостоятельно задайте имя файла)
