@@ -4,6 +4,8 @@
 # И второй скрипт, удаляющий эти папки.
 
 import os
+import sys
+import shutil
 
 list_dir = ['dir_' + str(el) for el in range(1, 10)]
 
@@ -46,7 +48,6 @@ except Exception as cls:
 # Задача-2:
 # Напишите скрипт, отображающий папки текущей директории.
 
-
 def cur_dirs():
     list_dirs = []
 
@@ -59,5 +60,29 @@ def cur_dirs():
     result_list_dirs = list_dirs[0]
     print(result_list_dirs)
 
+
+cur_dirs()
+
+
 # Задача-3:
 # Напишите скрипт, создающий копию файла, из которого запущен данный скрипт.
+
+# Функция копирования файла
+def duplicate_file(filename):
+    # Необходимо выполнить проверку isfile,
+    # т.к. при попытке копирования директории будет возникать ошибка
+    if os.path.isfile(filename):
+        newfile2 = filename + '.dupl'
+        shutil.copy(filename, newfile2)			# копируй
+        if os.path.exists(newfile2):
+            print("Файл {} был успешно создан".format(newfile2))
+            return True
+        else:
+            print("Возникли проблемы копирования")
+            return False
+
+
+# Получаем имя текущего файла
+cur_name = sys.argv[0][sys.argv[0].rfind('/') + 1:]
+
+duplicate_file(cur_name)
