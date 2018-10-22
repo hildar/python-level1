@@ -78,6 +78,23 @@ def duplicate_file(filename):
             return False
 
 
+# Функция удаления файла
+def remove_file(filename):
+    # Необходимо выполнить проверку exist, т.к. при попытке
+    # удаления не существующего файла будет возникать ошибка
+    if os.path.exists(filename):
+        if os.path.isfile(filename):
+            os.remove(filename)
+            print("Файл <<{}>> успешно удален".format(filename))
+            return True
+        else:
+            print('Отказано в доступе. Можно удалять только файлы')
+            return False
+    else:
+        print("Файла с именем <<{}>> не существует".format(filename))
+        return False
+
+
 # Получаем имя текущего файла
 cur_name = sys.argv[0][sys.argv[0].rfind('/') + 1:]
 
