@@ -127,16 +127,13 @@ print('Ученик {} учится в {} классе'.format(student2.get_fio(
 # 1. Получить полный список всех классов школы
 # Получаем через список учеников
 def all_classes(*args):
-    tpl = ()
-    tpl = tpl + args
-    tpl = list(set(tpl))
-    tpl.sort()
-    return tpl
+    lst = [x for x in range(len(args))]
+    for index, el in enumerate(args):
+        lst[index] = el.get_class_room
+    lst = list(set(lst))
+    lst.sort()
+    return lst
 
 
-#print(student1, student2, student3, student4)
-all_cls = all_classes(student1.get_class_room(), student2.get_class_room(),
-                      student3.get_class_room(), student4.get_class_room())
-
+all_cls = all_classes(student1, student2, student3, student4)
 print('Все классы в школе =', all_cls)
-
