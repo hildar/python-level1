@@ -1,4 +1,5 @@
 __author__ = 'Хусаинов Ильдар Ришадович'
+
 #!/usr/bin/python3
 
 """
@@ -106,9 +107,8 @@ class Cart:
         self._get_fifteen_items()
         self.original_line = [x for x in range(9)]
         self.lines = self._sort_random(self.original_line.copy())
-        # self.line_2 = self._sort_random(self.original_line.copy())
-        # self.line_3 = self._sort_random(self.original_line.copy())
 
+    #
     def _my_func(self, x):
         return int(x)
 
@@ -120,9 +120,9 @@ class Cart:
             for x in range(1, 4):
                 for y in range(1, 6):
                     idx = random.randrange(0, len(copy_list))
-                    five.append(str(copy_list[idx]))
+                    five.append(copy_list[idx])
                     copy_list.pop(idx)
-                five.sort(key=self._my_func)
+                five.sort()
                 self.fifteen.append(five.copy())
                 five.clear()
             return self.fifteen
@@ -141,6 +141,23 @@ class Cart:
             lines.append(lst.copy())
         return lines
 
+    # Метод проверки наличия цифры на карточке,
+    # а также зачеркивания, если такой атрибут передан (delete)
+    def cross_out(self, num, delete=False):
+        try:
+            for x in range(0, 3):
+                for y in range(0, 5):
+                    if num == self.fifteen[x][y]:
+                        if delete:
+                            self.health -= 1
+                            self.fifteen[x][y] = ' -'
+                            return True
+                        return True
+            return False
+        except ValueError:
+            pass
+        return "Список меньше чем вы думаете. Не мучайте его."
+
     # Метод вывода принадлежности карточки игрока
     def _print_name_cart(self):
         print('---------- Ваша карточка ----------')
@@ -156,29 +173,12 @@ class Cart:
                 if el == 5 or el == 6 or el == 7 or el == 8:
                     line += ''.rjust(2)
                 else:
-                    line += self.fifteen[x][y].rjust(2)
+                    line += str(self.fifteen[x][y]).rjust(2)
                     y += 1
                 if j < len(self.lines[x]) - 1:
                     line += ''.rjust(2)
             print(line)
         print('-----------------------------------')
-
-    # Метод проверки наличия цифры на карточке,
-    # а также зачеркивания, если такой атрибут передан (delete)
-    def cross_out(self, num, delete=False):
-        try:
-            for x in range(0, 3):
-                for y in range(0, 5):
-                    if str(num) == self.fifteen[x][y]:
-                        if delete:
-                            self.health -= 1
-                            self.fifteen[x][y] = ' -'
-                            return True
-                        return True
-            return False
-        except ValueError:
-            pass
-        return "Список меньше чем вы думаете. Не мучайте его."
 
 
 # Класс карточки компьютера с уникальным методом
@@ -321,10 +321,10 @@ game = Game(my_cart, cart_comp)
 while True:
     try:
         mode = int(input('В каком режиме запустить игру?\n'
-                           '[1] - ручной режим\n'
-                           '[2] - автоматический режим\n'
-                           '[3] - выход\n'
-                           '-->> '))
+                         '[1] - ручной режим\n'
+                         '[2] - автоматический режим\n'
+                         '[3] - выход\n'
+                         '-->> '))
         if mode == 1:
             game.start()  # Запуск в ручном режиме
             break
