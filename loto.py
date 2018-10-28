@@ -105,6 +105,7 @@ class Cart:
         self.health = 15  # Длина списка билетов
         self._get_fifteen_items()
         self.original_line = ['{}', '  ', '{}', '  ', '{}', '  ', '{}', '  ', '{}']
+        # self.original_line = ['{}', '{}', '  ', '  ', '  ', '  ', '{}', '{}', '{}']
         self.line_1 = self._sort_random(self.original_line.copy())
         self.line_2 = self._sort_random(self.original_line.copy())
         self.line_3 = self._sort_random(self.original_line.copy())
@@ -128,17 +129,21 @@ class Cart:
 
     # Метод рандомной сортировки строки
     def _sort_random(self, lst):
-        for _ in range(50):
+        for _ in range(10):
             x1 = random.randint(0, 8)
             x2 = random.randint(0, 8)
             if x1 != x2:
                 lst[x1], lst[x2] = lst[x2], lst[x1]
-        pattern = ' '.join(lst)
+        pattern = '  '.join(lst)
         return pattern
+
+    # Метод вывода принадлежности карточки игрока
+    def _print_name_cart(self):
+        print('--------- Ваша карточка ---------')
 
     # Метод вывода карточки игрока
     def print_cart(self):
-        print('--------- Ваша карточка ---------')
+        self._print_name_cart()
         print(self.line_1.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
                                                         self.fifteen[0][3], self.fifteen[0][4],))
         print(self.line_2.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
@@ -167,16 +172,9 @@ class Cart:
 
 # Класс карточки компьютера с уникальным методом
 class CartComp(Cart):
-    # Переоределяем метод вывода карточки компьютера
-    def print_cart(self):
+    # Переоределяем метод вывода принадлежности карточки компьютера
+    def _print_name_cart(self):
         print('------ Карточка компьютера-------')
-        print(self.line_1.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
-                                                        self.fifteen[0][3], self.fifteen[0][4],))
-        print(self.line_2.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
-                                                        self.fifteen[1][3], self.fifteen[1][4], ))
-        print(self.line_3.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
-                                                        self.fifteen[2][3], self.fifteen[2][4], ))
-        print('---------------------------------')
 
 
 # Класс запуска Игры
