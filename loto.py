@@ -58,3 +58,259 @@ __author__ = 'Хусаинов Ильдар Ришадович'
 модуль random: http://docs.python.org/3/library/random.html
 
 """
+
+import random
+
+
+# Класс бочонка
+class Barrel:
+    # Задаем длину списка при создании бочонка (по умолчанию = 90)
+    def __init__(self, length=90):
+        self.lst = [x for x in range(1, length + 1)]
+        self.number = ''
+        self.last_number = ''
+
+    # def delete_item(self):
+    #     try:
+    #         idx = random.randrange(0, len(self.lst))
+    #         self.lst.pop(idx)
+    #         return self.lst
+    #     except ValueError:
+    #         return "Список уже пуст. Не мучайте его."
+
+    # Метод выбора нового бочонка. Возвращает "число" и удаляет его из мешочка с бочонками.
+    def get_barrel(self):
+        self.last_number = self.number
+        try:
+            idx = random.randrange(0, len(self.lst))  # Случайный выбор бочонка
+            num = self.lst[idx]
+            self.lst.pop(idx)
+            self.number = num
+            return num
+        except ValueError:
+            return "Список уже пуст. Не мучайте его."
+
+    # Печатаем новый бочонок
+    def print_new(self):
+        print('Новый бочонок: {} (Предыдущий бочонок: {}. Осталось {} бочонков)'
+              .format(self.get_barrel(), self.last_number, len(self.lst)))
+
+
+# Класс карточки игрока
+class Cart:
+    # Задаем длину списка при создании карточки (по умолчанию = 90)
+    def __init__(self, length=90):
+        self.lst = [x for x in range(1, length + 1)]
+        self.fifteen = []
+        self.health = 15  # Длина списка билетов
+        self._get_fifteen_items()
+
+    # Метод создания списка из случайных 15 элементов
+    def _get_fifteen_items(self):
+        try:
+            five = []
+            copy_list = self.lst.copy()
+            for x in range(1, 4):
+                for y in range(1, 6):
+                    idx = random.randrange(0, len(copy_list))
+                    five.append(str(copy_list[idx]))
+                    copy_list.pop(idx)
+                five.sort()
+                self.fifteen.append(five.copy())
+                five.clear()
+            return self.fifteen
+        except ValueError:
+            return "Список меньше чем вы думаете. Не мучайте его."
+
+    # Метод вывода карточки игрока
+    def print_cart(self):
+        print('--------- Ваша карточка ---------')
+        print('{}  {}             {}     {}  {}'.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
+                                                        self.fifteen[0][3], self.fifteen[0][4],))
+        print('    {}  {}      {}     {}     {}'.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
+                                                        self.fifteen[1][3], self.fifteen[1][4], ))
+        print('{}  {}     {}     {}     {}     '.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
+                                                        self.fifteen[2][3], self.fifteen[2][4], ))
+        print('---------------------------------')
+
+    # Метод проверки наличия цифры на карточке,
+    # а также зачеркивания, если такой атрибут передан (delete)
+    def cross_out(self, num, delete=False):
+        try:
+            for x in range(0, 3):
+                for y in range(0, 5):
+                    if str(num) == self.fifteen[x][y]:
+                        if delete:
+                            self.health -= 1
+                            self.fifteen[x][y] = ' -'
+                            return True
+                        return True
+            return False
+        except ValueError:
+            pass
+        return "Список меньше чем вы думаете. Не мучайте его."
+
+
+# Класс карточки компьютера с уникальным методом
+class CartComp(Cart):
+    # Переоределяем метод вывода карточки компьютера
+    def print_cart(self):
+        print('------ Карточка компьютера-------')
+        print('{}  {}     {}     {}     {}     '.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
+                                                        self.fifteen[0][3], self.fifteen[0][4],))
+        print('{}  {}             {}     {}  {}'.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
+                                                        self.fifteen[1][3], self.fifteen[1][4], ))
+        print('    {}  {}      {}     {}     {}'.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
+                                                        self.fifteen[2][3], self.fifteen[2][4], ))
+        print('---------------------------------')
+
+
+# Класс запуска Игры
+class Game:
+    def __init__(self, human, comp):
+        self.human = human
+        self.comp = comp
+        # self.barrel = barrel
+        self.last_gamer = comp
+
+    # Ход компьютера в отдельном методе
+    def go_comp(self):
+        # Если игрок не проиграл, то следующий ход за компьютером
+        # Проверяем на наличие цифры в карточке
+        if self.comp.cross_out(barrel.number, True):
+            self.check_cart()
+            print('Компьютер зачеркнул цифру. Следующий ход ваш.')
+            self.print_game()
+            if self.game_over():
+                return True
+            else:
+                return False
+        else:
+            self.check_cart()
+            print('Компьютер пропустил ход. Следующий ход ваш.')
+            self.print_game()
+            if self.game_over():
+                return True
+            else:
+                return False
+
+    # Ход компьютера в отдельном методе
+    def _auto_go_human(self):
+        # Автоход для проверки победителя игры
+        # Проверяем на наличие цифры в карточке
+        if self.human.cross_out(barrel.number, True):
+            self.check_cart()
+            print('Вы зачеркнули цифру. Следующий ход компьютера.')
+            self.print_game()
+            if self.game_over():
+                return True
+            else:
+                return False
+        else:
+            self.check_cart()
+            print('Вы пропустили ход. Следующий ход компьютера.')
+            self.print_game()
+            if self.game_over():
+                return True
+            else:
+                return False
+
+    # Проверка чужой карточки н наличие цифры из бочонка
+    def check_cart(self):
+        # Проверяем и зачеркиваем при наличии цифры
+        if self.last_gamer.cross_out(barrel.number, True):
+            pass
+        # Переопределяем предыдущего игрока
+        if self.last_gamer == self.comp:
+            self.last_gamer = self.human
+        else:
+            self.last_gamer = self.comp
+
+    def game_over(self):
+        if self.human.health == 0:
+            print('Вы победили!')
+            return True
+        elif self.comp.health == 0:
+            print('Компьютер победил!')
+            return True
+        else:
+            return False
+
+    def print_game(self):
+        print('\nУ вас осталось {} цифр в билете. У компьютера осталось {} цифр в билете'
+              .format(self.human.health, self.comp.health))
+        barrel.print_new()
+        self.human.print_cart()
+        self.comp.print_cart()
+
+    def start(self):
+        self.print_game()
+        while True:
+            try:
+                key = input('Зачеркнуть цифру? (y/n). Выход (q) ')
+                if key == 'y':
+                    if self.human.cross_out(barrel.number, True):
+                        self.check_cart()
+                        self.print_game()
+                        if self.game_over():
+                            break
+                        if self.go_comp():
+                            break
+                    else:
+                        print("Игра окончена. Вы прогирали!")
+                        break
+                elif key == 'n':
+                    if self.human.cross_out(barrel.number):
+                        print("Игра окончена. Вы прогирали!")
+                        break
+                    else:
+                        self.check_cart()
+                        self.print_game()
+                        if self.game_over():
+                            break
+                        if self.go_comp():
+                            break
+                elif key == 'q':
+                    print("Досрочное завершеие игры")
+                    break
+                else:
+                    print('Сделай выбор тряпка!')
+            except Exception as cls:
+                print('Ошибка: ', cls)
+
+    # Метод для проверки окончания игры в атоматическом режиме
+    def auto_start(self):
+        self.print_game()
+        while True:
+            if self._auto_go_human():
+                break
+            if self.go_comp():
+                break
+
+
+# Определяем экземпляры классов
+barrel = Barrel()
+my_cart = Cart()
+cart_comp = CartComp()
+game = Game(my_cart, cart_comp)
+
+# Запускаем игру
+while True:
+    try:
+        mode = int(input('В каком режиме запустить игру?\n'
+                           '[1] - ручной режим\n'
+                           '[2] - автоматический режим\n'
+                           '[3] - выход\n'
+                           '-->> '))
+        if mode == 1:
+            game.start()  # Запуск в ручном режиме
+            break
+        elif mode == 2:
+            game.auto_start()  # Запуск в автоматическом режиме
+            break
+        elif mode == 3:
+            break
+        else:
+            print('Неизвестный выбор')
+    except ValueError:
+        print('Введите именно число')
