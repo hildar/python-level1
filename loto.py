@@ -67,8 +67,8 @@ class Barrel:
     # Задаем длину списка при создании бочонка (по умолчанию = 90)
     def __init__(self, length=90):
         self.lst = [x for x in range(1, length + 1)]
-        self.number = ''
-        self.last_number = ''
+        self.number = '-'
+        self.last_number = '-'
 
     # def delete_item(self):
     #     try:
@@ -104,6 +104,10 @@ class Cart:
         self.fifteen = []
         self.health = 15  # Длина списка билетов
         self._get_fifteen_items()
+        self.original_line = ['{}', '  ', '{}', '  ', '{}', '  ', '{}', '  ', '{}']
+        self.line_1 = self._sort_random(self.original_line.copy())
+        self.line_2 = self._sort_random(self.original_line.copy())
+        self.line_3 = self._sort_random(self.original_line.copy())
 
     # Метод создания списка из случайных 15 элементов
     def _get_fifteen_items(self):
@@ -122,14 +126,24 @@ class Cart:
         except ValueError:
             return "Список меньше чем вы думаете. Не мучайте его."
 
+    # Метод рандомной сортировки строки
+    def _sort_random(self, lst):
+        for _ in range(50):
+            x1 = random.randint(0, 8)
+            x2 = random.randint(0, 8)
+            if x1 != x2:
+                lst[x1], lst[x2] = lst[x2], lst[x1]
+        pattern = ' '.join(lst)
+        return pattern
+
     # Метод вывода карточки игрока
     def print_cart(self):
         print('--------- Ваша карточка ---------')
-        print('{}  {}             {}     {}  {}'.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
+        print(self.line_1.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
                                                         self.fifteen[0][3], self.fifteen[0][4],))
-        print('    {}  {}      {}     {}     {}'.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
+        print(self.line_2.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
                                                         self.fifteen[1][3], self.fifteen[1][4], ))
-        print('{}  {}     {}     {}     {}     '.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
+        print(self.line_3.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
                                                         self.fifteen[2][3], self.fifteen[2][4], ))
         print('---------------------------------')
 
@@ -156,11 +170,11 @@ class CartComp(Cart):
     # Переоределяем метод вывода карточки компьютера
     def print_cart(self):
         print('------ Карточка компьютера-------')
-        print('{}  {}     {}     {}     {}     '.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
+        print(self.line_1.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
                                                         self.fifteen[0][3], self.fifteen[0][4],))
-        print('{}  {}             {}     {}  {}'.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
+        print(self.line_2.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
                                                         self.fifteen[1][3], self.fifteen[1][4], ))
-        print('    {}  {}      {}     {}     {}'.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
+        print(self.line_3.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
                                                         self.fifteen[2][3], self.fifteen[2][4], ))
         print('---------------------------------')
 
