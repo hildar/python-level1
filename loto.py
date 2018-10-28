@@ -92,7 +92,7 @@ class Barrel:
 
     # Печатаем новый бочонок
     def print_new(self):
-        print('Новый бочонок: {} (Предыдущий бочонок: {}. Осталось {} бочонков)'
+        print('Новый бочонок: {} (Предыдущий бочонок: {}. Осталось бочонков: {})'
               .format(self.get_barrel(), self.last_number, len(self.lst)))
 
 
@@ -104,11 +104,13 @@ class Cart:
         self.fifteen = []
         self.health = 15  # Длина списка билетов
         self._get_fifteen_items()
-        self.original_line = ['{}', '  ', '{}', '  ', '{}', '  ', '{}', '  ', '{}']
-        # self.original_line = ['{}', '{}', '  ', '  ', '  ', '  ', '{}', '{}', '{}']
-        self.line_1 = self._sort_random(self.original_line.copy())
-        self.line_2 = self._sort_random(self.original_line.copy())
-        self.line_3 = self._sort_random(self.original_line.copy())
+        self.original_line = [x for x in range(9)]
+        self.lines = self._sort_random(self.original_line.copy())
+        # self.line_2 = self._sort_random(self.original_line.copy())
+        # self.line_3 = self._sort_random(self.original_line.copy())
+
+    def _my_func(self, x):
+        return int(x)
 
     # Метод создания списка из случайных 15 элементов
     def _get_fifteen_items(self):
@@ -120,37 +122,46 @@ class Cart:
                     idx = random.randrange(0, len(copy_list))
                     five.append(str(copy_list[idx]))
                     copy_list.pop(idx)
-                five.sort()
+                five.sort(key=self._my_func)
                 self.fifteen.append(five.copy())
                 five.clear()
             return self.fifteen
         except ValueError:
             return "Список меньше чем вы думаете. Не мучайте его."
 
-    # Метод рандомной сортировки строки
+    # Метод рандомной сортировки для строки
     def _sort_random(self, lst):
-        for _ in range(10):
-            x1 = random.randint(0, 8)
-            x2 = random.randint(0, 8)
-            if x1 != x2:
-                lst[x1], lst[x2] = lst[x2], lst[x1]
-        pattern = '  '.join(lst)
-        return pattern
+        lines = []
+        for x in range(3):
+            for _ in range(10):
+                x1 = random.randint(0, 8)
+                x2 = random.randint(0, 8)
+                if x1 != x2:
+                    lst[x1], lst[x2] = lst[x2], lst[x1]
+            lines.append(lst.copy())
+        return lines
 
     # Метод вывода принадлежности карточки игрока
     def _print_name_cart(self):
-        print('--------- Ваша карточка ---------')
+        print('---------- Ваша карточка ----------')
 
     # Метод вывода карточки игрока
     def print_cart(self):
         self._print_name_cart()
-        print(self.line_1.format(self.fifteen[0][0], self.fifteen[0][1], self.fifteen[0][2],
-                                                        self.fifteen[0][3], self.fifteen[0][4],))
-        print(self.line_2.format(self.fifteen[1][0], self.fifteen[1][1], self.fifteen[1][2],
-                                                        self.fifteen[1][3], self.fifteen[1][4], ))
-        print(self.line_3.format(self.fifteen[2][0], self.fifteen[2][1], self.fifteen[2][2],
-                                                        self.fifteen[2][3], self.fifteen[2][4], ))
-        print('---------------------------------')
+        # прогоняем на печать три строки карточки
+        for x in range(3):
+            line = ''
+            y = 0
+            for j, el in enumerate(self.lines[x]):
+                if el == 5 or el == 6 or el == 7 or el == 8:
+                    line += ''.rjust(2)
+                else:
+                    line += self.fifteen[x][y].rjust(2)
+                    y += 1
+                if j < len(self.lines[x]) - 1:
+                    line += ''.rjust(2)
+            print(line)
+        print('-----------------------------------')
 
     # Метод проверки наличия цифры на карточке,
     # а также зачеркивания, если такой атрибут передан (delete)
@@ -174,7 +185,7 @@ class Cart:
 class CartComp(Cart):
     # Переоределяем метод вывода принадлежности карточки компьютера
     def _print_name_cart(self):
-        print('------ Карточка компьютера-------')
+        print('------- Карточка компьютера--------')
 
 
 # Класс запуска Игры
