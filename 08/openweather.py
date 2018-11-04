@@ -123,3 +123,170 @@ OpenWeatherMap — онлайн-сервис, который предостав�
 
 """
 
+import os
+import datetime
+import json
+import sqlite3
+import urllib.request
+
+
+# Конвертация времени из timestamp
+def time_converter(time, key=False):
+    if key:
+        converted_time = datetime.datetime.fromtimestamp(
+            int(time)
+        ).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        converted_time = datetime.datetime.fromtimestamp(
+            int(time)
+        ).strftime('%H:%M')
+    return converted_time
+
+
+# Формирование полной ссылки запроса
+def url_builder(city_id):
+    # Считывание APPID из файла app.id
+    path_appid = os.path.join('app.id')
+    with open(path_appid, 'r', encoding='UTF-8') as f:
+        user_api = f.read()
+
+    unit = 'metric'  # Градусы цельсия
+    api = 'http://api.openweathermap.org/data/2.5/weather?id='
+
+    full_api_url = api + str(city_id) + '&mode=json&units=' + unit + '&APPID=' + user_api
+    return full_api_url
+
+
+# Выборка данных в JSON формате
+def data_fetch(full_api_url):
+    url = urllib.request.urlopen(full_api_url)
+    output = url.read().decode('utf-8')
+    raw_api_dict = json.loads(output)
+    url.close()
+    return raw_api_dict
+
+
+# Организовываем данные в словарь
+def data_organizer(raw_api_dict):
+    data = dict(
+            id_city=raw_api_dict.get('id'),
+            city=raw_api_dict.get('name'),
+            country=raw_api_dict.get('sys').get('country'),
+            temp=raw_api_dict.get('main').get('temp'),
+            temp_max=raw_api_dict.get('main').get('temp_max'),
+            temp_min=raw_api_dict.get('main').get('temp_min'),
+            humidity=raw_api_dict.get('main').get('humidity'),
+            pressure=raw_api_dict.get('main').get('pressure'),
+            sky=raw_api_dict['weather'][0]['main'],
+            id_weather=raw_api_dict['weather'][0]['id'],
+            sunrise=time_converter(raw_api_dict.get('sys').get('sunrise')),
+            sunset=time_converter(raw_api_dict.get('sys').get('sunset')),
+            wind=raw_api_dict.get('wind').get('speed'),
+            wind_deg=raw_api_dict.get('deg'),
+            dt=time_converter(raw_api_dict.get('dt'), key=True),
+            time=time_converter(raw_api_dict.get('dt')),
+            cloudiness=raw_api_dict.get('clouds').get('all')
+        )
+    return data
+
+
+# Вывод данных на печать
+def data_output(data):
+    m_symbol = '\xb0' + 'C'
+    print('---------------------------------------')
+    print('Current weather in: {}, {}:'.format(data['city'], data['country']))
+    print(data['temp'], m_symbol, data['sky'])
+    print('weather_id:', data['id_weather'])
+    print('Max: {}, Min: {}'.format(data['temp_max'], data['temp_min']))
+    print('')
+    print('Wind Speed: {}, Degree: {}'.format(data['wind'], data['wind_deg']))
+    print('Humidity: {}'.format(data['humidity']))
+    print('Cloud: {}'.format(data['cloudiness']))
+    print('Pressure: {}'.format(data['pressure']))
+    print('Sunrise at: {}'.format(data['sunrise']))
+    print('Sunset at: {}'.format(data['sunset']))
+    print('')
+    print('Last update from the server: {} {}'.format(data['dt'], data['time']))
+    print('---------------------------------------')
+
+
+# Подключение и запись в базу данных
+def connect_db(data):
+    db_name='weather.db'
+    # os.remove(db_name)
+    with sqlite3.connect(db_name) as conn:
+        # Create table on first connection
+        try:
+            conn.execute('''
+            create table weather (
+                id_city     integer primary key,
+                city        varchar(255),
+                country     varchar(255),                
+                temp        integer,
+                id_weather  integer,
+                date        date
+            );
+            ''')
+        except sqlite3.OperationalError:
+            pass  # Таблица уже существует
+
+        # Insert or Update
+        try:
+            conn.execute('''
+                insert into weather (id_city, city, country, temp, id_weather, date) VALUES (?,?,?,?,?,?)''', (
+                    data['id_city'],
+                    data['city'],
+                    data['country'],
+                    data['temp'],
+                    data['id_weather'],
+                    data['dt']
+                )
+            )
+        # If exist then will update
+        except sqlite3.IntegrityError:
+            conn.execute("update weather set "
+                         "city=:city, country=:country, temp=:temp, id_weather=:id_weather, date=:date "
+                         "where id_city=:id_city",
+                         {'city': data['city'],
+                          'country': data['country'],
+                          'temp': data['temp'],
+                          'id_weather': data['id_weather'],
+                          'date': data['dt'],
+                          'id_city': data['id_city']
+                          })
+
+
+# Печать из базы данных
+def get_db(id_city, db_name='weather.db'):
+    with sqlite3.connect(db_name) as conn:
+        # conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM weather WHERE id_city=%s'%id_city)
+        data = cur.fetchone()
+        print('----------------------')
+        print('id city: %s'%data[0])
+        print('city: %s'%data[1])
+        print('country: %s'%data[2])
+        print('temp: %s'%data[3])
+        print('id_weather: %s'%data[4])
+        print('date: %s'%data[5])
+
+
+id_ufa = 479561
+id_svobodny = 2015833
+
+
+if __name__ == '__main__':
+    try:
+        # print('data_fetch -->>', data_fetch(url_builder(id_ufa)))
+        # print('data_fetch -->>', json.dumps(data_fetch(url_builder(id_ufa)), sort_keys=True, indent=4))
+        # print('data_organizer -->>', data_organizer(data_fetch(url_builder(id_ufa))))
+        # data_output(data_organizer(data_fetch(url_builder(id_ufa))))
+        # data_output(data_organizer(data_fetch(url_builder(id_svobodny))))
+        connect_db(data_organizer(data_fetch(url_builder(id_ufa))))
+        connect_db(data_organizer(data_fetch(url_builder(id_svobodny))))
+        get_db(id_ufa)
+        get_db(id_svobodny)
+        pass
+    except IOError:
+        print('no internet')
